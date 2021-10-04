@@ -19,12 +19,14 @@ class MainViewController: UIViewController {
         return view
     }()
     
-    private lazy var viewButton: UIButton = {
-        let button = UIButton()
+    private lazy var filterButton: UIButton = {
+        // Préciser le type .system, sinon l'action au tap ne fonctionnera pas.
+        let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
         button.layer.borderColor = UIColor.white.cgColor
         button.setBackgroundImage(UIImage(named: "filterLogo"), for: .normal)
+        button.addTarget(self, action: #selector(onFilterButtonTap(sender:)), for: .touchUpInside)
         return button
     }()
     
@@ -50,7 +52,7 @@ class MainViewController: UIViewController {
         
         view.backgroundColor = .black
         view.addSubview(searchView)
-        searchView.addSubview(viewButton)
+        searchView.addSubview(filterButton)
         searchView.addSubview(searchBar)
         view.addSubview(tableView)
         
@@ -68,7 +70,17 @@ class MainViewController: UIViewController {
                     self?.tableView.reloadData()
                 }
             case .failure(let error):
-                print(error)
+                // Alerte: message
+                let dialogMessage = UIAlertController(title: "Erreur", message: error, preferredStyle: .alert)
+                 
+                // Création du bouton OK
+                let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                 
+                // Ajout du bouton OK dans le message de dialogue
+                dialogMessage.addAction(ok)
+                 
+                // Afficher l'alerte
+                self.present(dialogMessage, animated: true, completion: nil)
             }
         }
         
@@ -86,17 +98,17 @@ class MainViewController: UIViewController {
         constraints.append(searchView.heightAnchor.constraint(equalToConstant: 40))
         
         // Placement du bouton filtre dans la vue du haut
-        constraints.append(viewButton.topAnchor.constraint(equalTo: searchView.topAnchor))
-        constraints.append(viewButton.trailingAnchor.constraint(equalTo: searchView.trailingAnchor, constant: -10))
-        constraints.append(viewButton.bottomAnchor.constraint(equalTo: searchView.bottomAnchor))
-        constraints.append(viewButton.heightAnchor.constraint(equalToConstant: 40))
-        constraints.append(viewButton.widthAnchor.constraint(equalToConstant: 40))
+        constraints.append(filterButton.topAnchor.constraint(equalTo: searchView.topAnchor))
+        constraints.append(filterButton.trailingAnchor.constraint(equalTo: searchView.trailingAnchor, constant: -10))
+        constraints.append(filterButton.bottomAnchor.constraint(equalTo: searchView.bottomAnchor))
+        constraints.append(filterButton.heightAnchor.constraint(equalToConstant: 40))
+        constraints.append(filterButton.widthAnchor.constraint(equalToConstant: 40))
         
         // Placement de la barre de recherche dans la vue du haut
         constraints.append(searchBar.topAnchor.constraint(equalTo: searchView.topAnchor))
         constraints.append(searchBar.bottomAnchor.constraint(equalTo: searchView.bottomAnchor))
         constraints.append(searchBar.leadingAnchor.constraint(equalTo: searchView.leadingAnchor))
-        constraints.append(searchBar.trailingAnchor.constraint(equalTo: viewButton.leadingAnchor, constant: -10))
+        constraints.append(searchBar.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor, constant: -10))
         constraints.append(searchBar.heightAnchor.constraint(equalToConstant: 40))
         
         constraints.append(tableView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 10))
@@ -106,6 +118,16 @@ class MainViewController: UIViewController {
         
         // Application des contraintes
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    @objc func onFilterButtonTap(sender: UIButton!) {
+        // Afficher la vue pour les options de filtres.
+        let filterVC = FilterViewController()
+        filterVC.filterDelegate = self // Délégation
+        filterVC.viewModel = viewModel
+        filterVC.modalPresentationStyle = .fullScreen
+        
+        present(filterVC, animated: true, completion: nil)
     }
 }
 
@@ -169,3 +191,18 @@ extension MainViewController: UITableViewDataSource {
     }
 }
 
+extension MainViewController: FilterDelegate {
+    // Délégation: on récupère les données de la vue des filtres
+    func filterItemCategory(itemCategory: String) {
+        dismiss(animated: true) { [weak self] in
+            guard !itemCategory.isEmpty && itemCategory != "Toutes catégories" else {
+                if let vm = self?.viewModel, vm.isFiltered {
+                    vm.resetList()
+                }
+                return
+            }
+            
+            self?.viewModel.filterItems(category: itemCategory)
+        }
+    }
+}

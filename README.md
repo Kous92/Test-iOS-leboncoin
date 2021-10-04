@@ -58,11 +58,11 @@ Au niveau architecture modulaire, s'il faut respecter le principe de responsabil
 
 Moi même n'étant pas encore à l'aise avec les architectures les plus modulaires et les plus complexes (VIPER, Clean architecture,...), j'ai donc choisi l'architecture **MVVM** afin de respecter au mieux le principe de responsabilité unique et de permettre une meilleure couverture des tests (aussi du fait que c'est une architecture modulaire pas trop complexe pour les débutants).
 
-La solution utilise **UIKit**. L'ensemble des éléments visuels sont 100% full code, étant donné qu'il est **strictement interdit** dans ce test d'utiliser **SwiftUI**, 
+La solution utilise **UIKit**. L'ensemble des éléments visuels sont 100% full code, étant donné qu'il est **strictement interdit** dans ce test d'utiliser **SwiftUI**, les **XIB** ou les **Storyboard**.
 
 Au niveau versionning, depuis le scandale raciste aux États-Unis lié au policier qui a provoqué la mort de George FLOYD (paix à son âme), GitHub a décidé par la suite de remplacer le nom de la branche principale **master** par **main**.
 
-Aucun framework externe n'est utilisé étant donné qu'ils ont **strictements interdits** dans ce test.
+Aucun framework externe n'est utilisé étant donné qu'ils sont **strictement interdits** dans ce test.
 
 ### Difficultés rencontrées
 

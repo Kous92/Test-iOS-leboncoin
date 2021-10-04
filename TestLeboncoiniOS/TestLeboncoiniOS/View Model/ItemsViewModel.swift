@@ -23,6 +23,8 @@ class ItemsViewModel {
     // Avec ou sans filtrage. On conserve aussi un tableau original avant filtrage.
     var itemCellsViewModels = [ItemCellViewModel]()
     
+    var isFiltered = false
+    
     // Injection de dépendance de l'objet qui gère l'appel de l'API
     init(apiService: LeboncoinAPIService = LeboncoinAPIService()) {
         self.apiService = apiService
@@ -37,7 +39,9 @@ class ItemsViewModel {
                     return
                 }
                 
-                self?.categories = categories
+                // On va ajouter en plus des catégories téléchargées, une catégorie générique qui n'aura aucun filtre
+                self?.categories.append(Category(id: 0, name: "Toutes catégories"))
+                self?.categories += categories
             case .failure(let error):
                 print(error.rawValue)
                 self?.callback(.failure(error.rawValue))
@@ -98,12 +102,30 @@ class ItemsViewModel {
             return title.contains(query.lowercased())
         }
         
-        print("Éléments disponibles: \(itemCellsViewModels.count)")
-        callback(.reload)
+        if itemCellsViewModels.count > 0 {
+            isFiltered = true
+            callback(.reload)
+        } else {
+            callback(.failure("Aucune annonce disponible pour l'élément recherché: \(query)"))
+        }
+    }
+    
+    func filterItems(category: String) {
+        itemCellsViewModels = itemCellViewModels.filter { viewModel in
+            return viewModel.itemCategory == category
+        }
+        
+        if itemCellsViewModels.count > 0 {
+            isFiltered = true
+            callback(.reload)
+        } else {
+            callback(.failure("Aucune annonce disponible pour la catégorie: \(category)"))
+        }
     }
     
     func resetList() {
         itemCellsViewModels = itemCellViewModels
+        isFiltered = false
         callback(.reload)
     }
 }
