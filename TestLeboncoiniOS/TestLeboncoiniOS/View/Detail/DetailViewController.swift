@@ -17,8 +17,7 @@ class DetailViewController: UIViewController {
     private lazy var productImage: CachedImageView = {
         let imageView = CachedImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .purple
-        
+        imageView.accessibilityIdentifier = "productImage" // Pour les tests UI
         return imageView
     }()
     
@@ -28,6 +27,7 @@ class DetailViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setBackgroundImage(UIImage(named: "closeButton"), for: .normal)
         button.addTarget(self, action: #selector(onCloseTap(sender:)), for: .touchUpInside)
+        button.accessibilityIdentifier = "closeButton" // Pour les tests UI
         return button
     }()
     
@@ -38,6 +38,7 @@ class DetailViewController: UIViewController {
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "productTitle" // Pour les tests UI
         return label
     }()
     
@@ -48,6 +49,7 @@ class DetailViewController: UIViewController {
         label.sizeToFit()
         label.textColor = .systemGreen
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "productPrice" // Pour les tests UI
         return label
     }()
     
@@ -58,6 +60,7 @@ class DetailViewController: UIViewController {
         label.sizeToFit()
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "productDate" // Pour les tests UI
         return label
     }()
     
@@ -79,6 +82,7 @@ class DetailViewController: UIViewController {
         label.sizeToFit()
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "productDescription" // Pour les tests UI
         return label
     }()
     
@@ -89,6 +93,7 @@ class DetailViewController: UIViewController {
         label.sizeToFit()
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "productPro" // Pour les tests UI
         return label
     }()
     
@@ -102,6 +107,7 @@ class DetailViewController: UIViewController {
     
     private func setupScrollView() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.accessibilityIdentifier = "scrollView"
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(scrollView)
@@ -183,9 +189,9 @@ class DetailViewController: UIViewController {
         
         if let url = URL(string: viewModel?.image ?? "") {
             // Téléchargement asynchrone de l'image
-            productImage.loadImage(fromURL: url, placeholderImage: "test1")
+            productImage.loadImage(fromURL: url, placeholderImage: "noImage")
         } else {
-            productImage.image = UIImage(named: "test1")
+            productImage.image = UIImage(named: "noImage")
         }
     }
     

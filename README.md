@@ -64,10 +64,13 @@ Au niveau versionning, depuis le scandale raciste aux États-Unis lié au polici
 
 Aucun framework externe n'est utilisé étant donné qu'ils sont **strictement interdits** dans ce test.
 
+Concernant les tests, j'ai mis en place des tests unitaires simulant des appels réseau par le biais du mocking. De même pour les tests UI. En tout, la couverture du code en exécutant les tests unitaires (white box) et les tests UI (black box) s'élève à **85,2%**.
+
 ### Difficultés rencontrées
 
 - Le fait que toute assistance (storyboard, XIB, SwiftUI) pour mettre en place les éléments visuels soit interdite. Cela prend donc plus de temps pour les configurer, les positionner avec Auto Layout par code.
+- L'UI/UX optimisé avec les iPad, l'aspect ratio (images de formats différents), cela me prendrait trop de temps.
 - La mise en place de l'architecture **MVVM**, notamment pour assurer la testabilité et surtout pour respecter au mieux le principe de responsabilité unique.
 - La configuration du projet Xcode afin qu'il soit compatible au minimum avec iOS 12.
-- La couverture du code par les tests (unitaires et UI).
+- La couverture du code par les tests (unitaires et UI), il est difficile de tester les vues modèles avec plusieurs appels réseau à la suite.
 - Je ne dispose pas de compte Apple Developer payant (enregistré à l'Apple Developer Program).

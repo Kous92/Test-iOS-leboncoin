@@ -21,6 +21,7 @@ class FilterViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setBackgroundImage(UIImage(named: "closeButton"), for: .normal)
         button.addTarget(self, action: #selector(onCloseTap(sender:)), for: .touchUpInside)
+        button.accessibilityIdentifier = "filterCloseButton" // Pour les tests UI
         return button
     }()
     
@@ -33,6 +34,7 @@ class FilterViewController: UIViewController {
         label.sizeToFit()
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "categoryTitle" // Pour les tests UI
         return label
     }()
     
@@ -41,6 +43,7 @@ class FilterViewController: UIViewController {
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         // table.separatorStyle = .none
+        table.accessibilityIdentifier = "filterTableView" // Pour les tests UI
         return table
     }()
     

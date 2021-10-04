@@ -138,9 +138,9 @@ class ItemTableViewCell: UITableViewCell {
         
         if let url = URL(string: viewModel.image) {
             // Téléchargement asynchrone de l'image
-            itemImage.loadImage(fromURL: url, placeholderImage: "test1")
+            itemImage.loadImage(fromURL: url, placeholderImage: "noImage")
         } else {
-            itemImage.image = UIImage(named: "test1")
+            itemImage.image = UIImage(named: "noImage")
         }
     }
 }

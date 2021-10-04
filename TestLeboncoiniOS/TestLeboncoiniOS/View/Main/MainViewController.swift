@@ -27,6 +27,7 @@ class MainViewController: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
         button.setBackgroundImage(UIImage(named: "filterLogo"), for: .normal)
         button.addTarget(self, action: #selector(onFilterButtonTap(sender:)), for: .touchUpInside)
+        button.accessibilityIdentifier = "filterButton" // Pour les tests UI
         return button
     }()
     
@@ -36,6 +37,7 @@ class MainViewController: UIViewController {
         bar.backgroundImage = UIImage() // Supprimer le fond par défaut
         bar.placeholder = "Rechercher"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "Annuler"
+        bar.accessibilityIdentifier = "searchBar" // Pour les tests UI
         return bar
     }()
     
@@ -44,6 +46,7 @@ class MainViewController: UIViewController {
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(ItemTableViewCell.self, forCellReuseIdentifier: ItemTableViewCell.identifier)
         table.separatorStyle = .none
+        table.accessibilityIdentifier = "mainTableView" // Pour les tests UI
         return table
     }()
     

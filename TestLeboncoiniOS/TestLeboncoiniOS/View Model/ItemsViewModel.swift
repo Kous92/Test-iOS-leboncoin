@@ -8,7 +8,8 @@
 import Foundation
 
 class ItemsViewModel {
-    private let apiService: LeboncoinAPIService?
+    // Le type du protocole servira pour les tests ou la partie application (cela étant géré par l'injection de dépendance)
+    private let apiService: APIService?
     
     // L'élément-clé de l'architecture MVVM pour le data binding entre la vue et la vue modèle. La vue ayant une référence sur ce callback va permettre la mise à jour de son contenu.
     var callback: (_ type: CallbackType) -> () = { _ in }
@@ -26,7 +27,7 @@ class ItemsViewModel {
     var isFiltered = false
     
     // Injection de dépendance de l'objet qui gère l'appel de l'API
-    init(apiService: LeboncoinAPIService = LeboncoinAPIService()) {
+    init(apiService: APIService = LeboncoinAPIService()) {
         self.apiService = apiService
     }
     

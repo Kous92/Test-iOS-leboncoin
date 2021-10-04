@@ -18,16 +18,41 @@ class TestLeboncoiniOSTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testFetchItems() {
+        let expectation = expectation(description: "Récupérer les annonces.")
+        let apiService = LeboncoinMockAPIService()
+        apiService.resourceName = "itemDataTest"
+        
+        apiService.fetchItems { result in
+            expectation.fulfill()
+            switch result {
+            case .success(let products):
+                XCTAssertGreaterThan(products.count, 0)
+            case .failure(_):
+                XCTFail()
+            }
         }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
     }
-
+    
+    func testFetchCategories() {
+        let expectation = expectation(description: "Récupérer les catégories.")
+        let apiService = LeboncoinMockAPIService()
+        apiService.resourceName = "categoryDataTest"
+        
+        apiService.fetchItemCategories { result in
+            expectation.fulfill()
+            switch result {
+            case .success(let categories):
+                XCTAssertGreaterThan(categories.count, 0)
+            case .failure(_):
+                XCTFail()
+            }
+        }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
+    }
+    
+    // Pour tester les vues modèles, c'est plus compliqué, et là, lorsque j'ai essayé, XCTest se plaint avec ceci: API violation - multiple calls made to -[XCTestExpectation fulfill] for ... S'il n'y avait pas ce souci, la couverture du code en serait encore plus grande.
 }

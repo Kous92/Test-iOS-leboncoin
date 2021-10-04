@@ -8,7 +8,7 @@
 import Foundation
 
 // Les frameworks externes sont interdits dans ce test, le faisant de base avec Alamofire. On fera donc avec URLSession
-class LeboncoinAPIService {
+class LeboncoinAPIService: APIService {
     private let itemsURL = URL(string: "https://raw.githubusercontent.com/leboncoin/paperclip/master/listing.json")
     private let itemCategoriesURL = URL(string: "https://raw.githubusercontent.com/leboncoin/paperclip/master/categories.json")
     
