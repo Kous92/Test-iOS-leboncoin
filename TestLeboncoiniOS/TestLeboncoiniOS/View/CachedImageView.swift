@@ -7,15 +7,15 @@
 
 import UIKit
 
-// Les frameworks externes sont interdits dans ce test, le faisant de base avec Kinfisher.
+// Les frameworks externes sont interdits dans ce test, le faisant de base avec Kingfisher.
 class CachedImageView: UIImageView {
-    private let imageCache = NSCache<AnyObject, UIImage>()
+    private static let imageCache = NSCache<AnyObject, UIImage>()
     
     func loadImage(fromURL imageURL: URL, placeholderImage: String) {
         // Image temporaire ou maintenue si l'image de l'URL est indisponible
         self.image = UIImage(named: placeholderImage)
         
-        if let cachedImage = self.imageCache.object(forKey: imageURL as AnyObject) {
+        if let cachedImage = CachedImageView.imageCache.object(forKey: imageURL as AnyObject) {
             self.image = cachedImage
             return
         }

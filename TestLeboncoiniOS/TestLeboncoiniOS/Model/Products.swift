@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Product: Codable {
+struct Product: Decodable {
     var id, categoryID: Int
     var title, productDescription: String
     var price: Int
@@ -30,6 +30,6 @@ struct Product: Codable {
 }
 
 // MARK: - ImagesURL
-struct ImagesURL: Codable {
+struct ImagesURL: Decodable {
     var small, thumb: String?
 }

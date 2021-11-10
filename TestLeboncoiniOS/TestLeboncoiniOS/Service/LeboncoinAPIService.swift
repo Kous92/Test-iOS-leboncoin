@@ -19,48 +19,7 @@ class LeboncoinAPIService: APIService {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-            // Erreur réseau
-            guard error == nil else {
-                print(error?.localizedDescription ?? "Erreur réseau")
-                completion(.failure(.networkError))
-                
-                return
-            }
-            
-            // Pas de réponse du serveur
-            guard let httpResponse = response as? HTTPURLResponse else {
-                completion(.failure(.apiError))
-                
-                return
-            }
-            
-            switch httpResponse.statusCode {
-                // Code 200, vérifions si les données existent
-                case (200...299):
-                    if let productData = data {
-                        var output: [Product]?
-                        
-                        do {
-                            output = try JSONDecoder().decode([Product].self, from: productData)
-                        } catch {
-                            print(error)
-                            completion(.failure(.decodeError))
-                            return
-                        }
-                        
-                        if let products = output {
-                            // print("Articles disponibles: \(newsData.count)")
-                            completion(.success(products))
-                        }
-                    } else {
-                        completion(.failure(.failed))
-                    }
-                default:
-                    completion(.failure(.failed))
-            }
-        }
-        task.resume()
+        getRequest(url: url, completion: completion)
     }
     
     func fetchItemCategories(completion: @escaping (Result<[Category], APIError>) -> ()) {
@@ -70,6 +29,11 @@ class LeboncoinAPIService: APIService {
             return
         }
         
+        getRequest(url: url, completion: completion)
+    }
+    
+    // Couche réseau générique
+    fileprivate func getRequest<T: Decodable>(url: URL, completion: @escaping (Result<[T], APIError>) -> ()) {
         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
             // Erreur réseau
             guard error == nil else {
@@ -90,18 +54,17 @@ class LeboncoinAPIService: APIService {
                 // Code 200, vérifions si les données existent
                 case (200...299):
                     if let data = data {
-                        var output: [Category]?
+                        var output: [T]?
                         
                         do {
-                            output = try JSONDecoder().decode([Category].self, from: data)
+                            output = try JSONDecoder().decode([T].self, from: data)
                         } catch {
                             completion(.failure(.decodeError))
                             return
                         }
                         
-                        if let categories = output {
-                            // print("Articles disponibles: \(newsData.count)")
-                            completion(.success(categories))
+                        if let objects = output {
+                            completion(.success(objects))
                         }
                     } else {
                         completion(.failure(.failed))

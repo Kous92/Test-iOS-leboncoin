@@ -42,26 +42,25 @@ class ItemCellViewModel {
     // Également, on va récupérer le temps en secondes de la date au format UNIX depuis 1970. Cela permettra de trier les annonces par date du plus récent au plus ancien.
     private func stringToDateFormat(date: String?) -> String? {
         if let publishDate = date {
-            let formatter1 = DateFormatter()
-            let formatter2 = DateFormatter()
-            formatter1.locale = Locale(identifier: "en_US_POSIX")
-            formatter1.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-            formatter2.locale = Locale(identifier: "en_US_POSIX")
-            formatter2.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
 
-            if let date = formatter1.date(from: publishDate), let time = formatter2.date(from: publishDate) {
-                formatter1.locale = Locale(identifier: "fr_FR")
-                formatter2.locale = Locale(identifier: "fr_FR")
-                formatter1.dateStyle = .short
-                formatter2.timeStyle = .short
+            if let date = formatter.date(from: publishDate) {
+                formatter.locale = Locale(identifier: "fr_FR")
+                formatter.dateStyle = .short
+                
+                let dateString = formatter.string(from: date) // Jour, mois, année
+                
+                formatter.dateStyle = .none
+                formatter.timeStyle = .short
                 
                 // Le temps en secondes de la date au format UNIX depuis 1970
                 dateTimeSeconds = Int(date.timeIntervalSince1970)
                 
-                formatter1.string(from: date) // Jour, mois, année
-                formatter2.string(from: time) // Heures et minutes
+                let timeString = formatter.string(from: date) // Heure, minutes
                 
-                return "Le " + formatter1.string(from: date) + " à " + formatter2.string(from: time)
+                return "Le " + dateString + " à " + timeString
             }
         }
 

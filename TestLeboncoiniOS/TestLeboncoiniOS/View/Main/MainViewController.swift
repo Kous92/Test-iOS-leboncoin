@@ -50,15 +50,25 @@ class MainViewController: UIViewController {
         return table
     }()
     
+    private lazy var loadingSpinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .white)
+        spinner.startAnimating()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.isHidden = false
+        return spinner
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .black
+        view.addSubview(loadingSpinner)
         view.addSubview(searchView)
         searchView.addSubview(filterButton)
         searchView.addSubview(searchBar)
         view.addSubview(tableView)
         
+        tableView.isHidden = true
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
@@ -67,9 +77,13 @@ class MainViewController: UIViewController {
         
         // Le data binding de la vue modèle, la vue se met à jour en temps réel par rapport à la vue modèle
         viewModel.callback = { type in
+            self.loadingSpinner.stopAnimating()
+            self.loadingSpinner.isHidden = true
+            
             switch type {
             case .reload:
                 DispatchQueue.main.async { [weak self] in
+                    self?.tableView.isHidden = false
                     self?.tableView.reloadData()
                 }
             case .failure(let error):
@@ -93,6 +107,9 @@ class MainViewController: UIViewController {
     private func setConstraints() {
         // Ajout des contraintes: Auto Layout manuel par code
         var constraints = [NSLayoutConstraint]()
+        
+        constraints.append(loadingSpinner.centerXAnchor.constraint(equalTo: view.centerXAnchor))
+        constraints.append(loadingSpinner.centerYAnchor.constraint(equalTo: view.centerYAnchor))
         
         // Vue du haut (barre de recherche + bouton filtre)
         constraints.append(searchView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor))
@@ -152,6 +169,8 @@ extension MainViewController: UISearchBarDelegate {
             return
         }
         
+        loadingSpinner.startAnimating()
+        loadingSpinner.isHidden = false
         viewModel.searchItems(query: searchText)
     }
     
@@ -198,6 +217,9 @@ extension MainViewController: FilterDelegate {
     // Délégation: on récupère les données de la vue des filtres
     func filterItemCategory(itemCategory: String) {
         dismiss(animated: true) { [weak self] in
+            self?.loadingSpinner.startAnimating()
+            self?.loadingSpinner.isHidden = false
+            
             guard !itemCategory.isEmpty && itemCategory != "Toutes catégories" else {
                 if let vm = self?.viewModel, vm.isFiltered {
                     vm.resetList()

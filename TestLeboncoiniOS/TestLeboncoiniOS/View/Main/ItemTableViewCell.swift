@@ -68,6 +68,7 @@ class ItemTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         // Ici on va positionner les éléments dans la vue de la cellule (ici contentView)
+        contentView.backgroundColor = .black
         contentView.addSubview(itemImage)
         contentView.addSubview(itemLabel)
         contentView.addSubview(itemCategoryLabel)
@@ -97,6 +98,12 @@ class ItemTableViewCell: UITableViewCell {
         var constraints = [NSLayoutConstraint]()
         
         // Contraintes image: format 120x120 avec 10 du haut, de la gauche et du bas
+        constraints.append(itemImage.widthAnchor.constraint(equalToConstant: 120))
+        constraints.append(itemImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10))
+        constraints.append(itemImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10))
+        constraints.append(itemImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10))
+        
+        
         // constraints.append(itemImage.heightAnchor.constraint(equalToConstant: 100))
         constraints.append(itemImage.widthAnchor.constraint(equalToConstant: 120))
         constraints.append(itemImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10))

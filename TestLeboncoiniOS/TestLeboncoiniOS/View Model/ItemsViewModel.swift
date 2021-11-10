@@ -32,11 +32,22 @@ class ItemsViewModel {
     }
     
     func getItems() {
+        let group = DispatchGroup()
+        var failureMessage = ""
+        var failed = false
+        
+        // L'objectif ici est de pouvoir attendre les résultats des 2 appels HTTP avant d'intéragir avec la vue
+        group.enter()
         apiService?.fetchItemCategories { [weak self] result in
+            defer {
+                group.leave()
+            }
+            
             switch result {
             case .success(let categories):
                 guard categories.count > 0 else {
-                    self?.callback(.failure("Pas de catégories disponibles."))
+                    failed = true
+                    failureMessage = "Pas de catégories disponibles."
                     return
                 }
                 
@@ -45,15 +56,22 @@ class ItemsViewModel {
                 self?.categories += categories
             case .failure(let error):
                 print(error.rawValue)
-                self?.callback(.failure(error.rawValue))
+                failed = true
+                failureMessage = "Pas de catégories disponibles."
             }
         }
         
+        group.enter()
         apiService?.fetchItems { [weak self] result in
+            defer {
+                group.leave()
+            }
+            
             switch result {
             case .success(let products):
                 guard products.count > 0 else {
-                    self?.callback(.failure("Pas d'annonces disponibles."))
+                    failed = true
+                    failureMessage = "Pas d'annonces disponibles."
                     return
                 }
                 self?.items = products
@@ -72,27 +90,34 @@ class ItemsViewModel {
                 } ?? []
                 
                 // Tri des éléments par urgence et par date (du plus récent au plus ancien)
-                let urgentItems = self?.itemCellViewModels.filter { viewModel in
-                    return viewModel.isUrgent
-                }.sorted(by: { item1, item2 in
+                // Version optimisée et plus performante
+                let sortedItems = self?.itemCellViewModels.sorted(by: { item1, item2 in
+                    if item1.isUrgent && !item2.isUrgent {
+                        return true
+                    } else if !item1.isUrgent && item2.isUrgent {
+                        return false
+                    }
+                    
                     return item1.dateTimeSeconds > item2.dateTimeSeconds
                 }) ?? []
                 
-                let nonUrgentItems = self?.itemCellViewModels.filter { viewModel in
-                    return !viewModel.isUrgent
-                }.sorted(by: { item1, item2 in
-                    return item1.dateTimeSeconds > item2.dateTimeSeconds
-                }) ?? []
-                
-                self?.itemCellViewModels = urgentItems + nonUrgentItems // La liste originale triée non filtrée
+                self?.itemCellViewModels = sortedItems // La liste originale triée non filtrée
                 self?.itemCellsViewModels = self?.itemCellViewModels ?? [] // La liste filtrée (on l'initialise en copie de la liste originale)
-                
-                // Dès que les données sont mises à jour dans la vue modèle, le callback va permettre le data binding avec la vue pour que celle-ci mette automatiquement à jour les éléments visuels. C'est la partie-clé de l'architecture MVVM.
-                self?.callback(.reload)
             case .failure(let error):
                 print(error.rawValue)
-                // S'il y a eu une erreur, le callback va notifier la vue qu'il y a une erreur à afficher, par le biais du data binding de l'architecture MVVM.
-                self?.callback(.failure(error.rawValue))
+                failed = true
+                failureMessage = error.rawValue
+            }
+        }
+        
+        // Une fois les 2 appels effectués, on met à jour l'interface utilisateur (group.notify se déclenche seulement si les 2 appels du groupe sont entrés et sortis.
+        group.notify(queue: .main) { [weak self] in
+            // S'il y a eu une erreur, le callback va notifier la vue qu'il y a une erreur à afficher, par le biais du data binding de l'architecture MVVM.
+            if failed {
+                self?.callback(.failure(failureMessage))
+            } else {
+                // Dès que les données sont mises à jour dans la vue modèle, le callback va permettre le data binding avec la vue pour que celle-ci mette automatiquement à jour les éléments visuels. C'est la partie-clé de l'architecture MVVM.
+                self?.callback(.reload)
             }
         }
     }
