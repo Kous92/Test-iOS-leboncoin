@@ -12,7 +12,7 @@ class FilterViewController: UIViewController {
     var filterDelegate: FilterDelegate?
     weak var viewModel: ItemsViewModel?
     
-    private var actualSelectedIndex = 0
+    private var actualSelectedIndex = UserDefaults.standard.integer(forKey: "selectedCategory") // 0 si aucun paramètre sauvegardé
     private var selectedCategory = "Toutes catégories"
     
     private lazy var closeButton: UIButton = {
@@ -124,5 +124,8 @@ extension FilterViewController: UITableViewDelegate {
         
         // On garde en mémoire la catégorie séléctionnée
         selectedCategory = viewModel?.categories[indexPath.row].name ?? ""
+        
+        // On sauvegarde la catégorie sélectionnée
+        UserDefaults.standard.set(selected, forKey: "selectedCategory")
     }
 }

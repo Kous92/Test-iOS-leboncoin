@@ -54,7 +54,7 @@ Bonne chance. L’équipe iOS a hâte de voir votre projet !
 
 ## <a name="solution"></a>Ma solution
 
-Au niveau architecture modulaire, s'il faut respecter le principe de responsabilité unique (Single Responsibility), il est clair que **l'architecture la plus simple (et celle par défaut de UIKit) étant MVC est à bannir**. 
+Au niveau architecture modulaire, s'il faut respecter le principe de responsabilité unique (Single Responsibility), il est clair que **l'architecture la plus simple (et celle par défaut de UIKit) étant MVC est à bannir. L'architecture MVP est également à bannir dans ce cas de figure.**. 
 
 Moi même n'étant pas encore à l'aise avec les architectures les plus modulaires et les plus complexes (VIPER, Clean architecture,...), j'ai donc choisi l'architecture **MVVM** afin de respecter au mieux le principe de responsabilité unique et de permettre une meilleure couverture des tests (aussi du fait que c'est une architecture modulaire pas trop complexe pour les débutants).
 
